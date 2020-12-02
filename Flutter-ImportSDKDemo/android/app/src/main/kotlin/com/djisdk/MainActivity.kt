@@ -13,9 +13,7 @@ import androidx.core.content.ContextCompat
 import com.secneo.sdk.Helper
 import dji.common.error.DJIError
 import dji.common.error.DJISDKError
-import dji.common.mission.waypoint.WaypointMissionDownloadEvent
-import dji.common.mission.waypoint.WaypointMissionExecutionEvent
-import dji.common.mission.waypoint.WaypointMissionUploadEvent
+import dji.common.mission.waypoint.*
 import dji.sdk.base.BaseComponent
 import dji.sdk.base.BaseProduct
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener
@@ -132,6 +130,39 @@ class MainActivity: FlutterActivity() {
                                 }
                                 DJISDKManager.getInstance().missionControl.waypointMissionOperator.addListener(listener)
                                 DJISDKManager.getInstance().startConnectionToProduct()
+
+                                val waypointMissionBuilder = WaypointMission.Builder().apply {
+                                    finishedAction(WaypointMissionFinishedAction.GO_HOME)
+                                    headingMode(WaypointMissionHeadingMode.AUTO)
+                                    autoFlightSpeed(8F)
+                                    maxFlightSpeed(8F)
+                                    flightPathMode(WaypointMissionFlightPathMode.NORMAL)
+
+                                    for (i in 0..5) {
+                                        addWaypoint(Waypoint(10.0 + i.toDouble(), 10.0, 10F))
+                                    }
+
+                                    // Test this line
+                                    waypointCount(5)
+                                }
+
+                                val error = DJISDKManager.getInstance().missionControl
+                                        .waypointMissionOperator
+                                        .loadMission(waypointMissionBuilder.build())
+
+                                if (error == null) {
+                                    DJISDKManager.getInstance().missionControl
+                                            .waypointMissionOperator
+                                            .uploadMission {
+                                        if (it == null) {
+                                            showToast("Added succesful")
+                                        } else {
+                                            showToast("$it")
+                                        }
+                                    }
+                                } else {
+                                    showToast("$error")
+                                }
                             } else {
                                 showToast("Register sdk fails, please check the bundle id and network connection!")
                                 Log.v(TAG, djiError.description)
