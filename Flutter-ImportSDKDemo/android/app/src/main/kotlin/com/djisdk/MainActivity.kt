@@ -146,7 +146,7 @@ class MainActivity: FlutterActivity() {
                                 flightPathMode(WaypointMissionFlightPathMode.NORMAL)
 
                                 for (i in 0..5) {
-                                    addWaypoint(Waypoint(10.0 + 0.001 * i.toDouble(), 10.0, 10F))
+                                    addWaypoint(Waypoint(-32.992527069908256 + 0.001 * i.toDouble(), -60.6558122730206, 10F))
                                 }
 
                                 // Test this line
